@@ -17,7 +17,10 @@
   },
   "homepage": "https://github.com/whithedel/bamazon#readme",
   "dependencies": {
+    "chalk": "^2.4.2",
+    "dotenv": "^8.0.0",
     "inquirer": "^6.5.0",
-    "mysql": "^2.17.1"
+    "mysql": "^2.17.1",
+    "table": "^5.4.1"
   }
 }
