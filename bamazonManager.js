@@ -28,7 +28,8 @@ function setOfMenuOptions(message) {
           `View Products for Sale`,
           `View Low Inventory`,
           `Add to Inventory`,
-          `Add New Product`
+          `Add New Product`,
+          `EXIT`
         ]
       }
     ])
@@ -42,6 +43,8 @@ function setOfMenuOptions(message) {
         addToInventory();
       } else if (menu === `Add New Product`) {
         confirmAddNewProduct();
+      }else if (menu === `EXIT`){
+          connection.end()
       }
     });
   if (typeof message !== `undefined`) {
