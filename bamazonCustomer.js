@@ -1,3 +1,4 @@
+//dependencies
 var inquirer = require(`inquirer`);
 var mysql = require(`mysql`);
 require("dotenv").config();
@@ -5,6 +6,8 @@ var { table } = require("table");
 var chalk = require("chalk");
 var log = console.log;
 
+
+//setting up my connection.
 var connection = mysql.createConnection({
   host: process.env.DB_HOST,
   user: process.env.DB_USER,
@@ -13,6 +16,7 @@ var connection = mysql.createConnection({
 });
 
 
+//function to trigger a menu options
 function options() {
   inquirer
     .prompt([
@@ -34,6 +38,7 @@ function options() {
 }
 
 
+//fires the connection to MySql database 
 connection.connect(function(error) {
   if (error){
     console.error("error connecting: " + err.stack);
@@ -44,6 +49,7 @@ connection.connect(function(error) {
 });
 
 
+//function that will open the store to show all available items for purchase
 function openStore(message) {
   connection.query(`select * from products`, function(error, result) {
     if (error) throw error;
@@ -87,11 +93,13 @@ function openStore(message) {
   });
 }
 
+//function that helps validates the choice parameter as a number.
 function validateChoice(choice) {
   var reg = /^\d+$/;
   return reg.test(choice) || "A number should be inputed!";
 }
 
+//function that will run the store and to be able to take an order.
 function runStore() {
   inquirer
     .prompt([
@@ -119,6 +127,7 @@ function runStore() {
     });
 }
 
+//function that will help executing a purchase if the amount requested by a client is available.
 function checkStorageForPurchase(id, requestedAmount) {
   connection.query(`select * from products where item_id = ${id}`, function(
     error,
@@ -137,6 +146,7 @@ function checkStorageForPurchase(id, requestedAmount) {
       } else {
         var price = result[0].price;
         var itemName = result[0].product_name;
+        //query to update the inventory in the database link to a specific id.
         connection.query(
           `update products set stock_quantity = ${amount -
             requestedAmount} where item_id = ${id}`,
@@ -159,6 +169,7 @@ function checkStorageForPurchase(id, requestedAmount) {
   });
 }
 
+//function that will be use to display the amount left in stock after a purchase.
 function leftInStock(id) {
   connection.query(`select * from products where item_id = ${id}`, function(
     error,
@@ -174,7 +185,7 @@ function leftInStock(id) {
   });
 }
 
-
+//function that will be use to update the database product_sales column after a purchase has been executed.
 function updateProductSales(id,currentSale){
     connection.query(`select product_sales from products where item_id = ${id}`, function (error, result){
         if (error) throw error
@@ -182,5 +193,6 @@ function updateProductSales(id,currentSale){
         connection.query(`update products set product_sales = ${totalItemSales+currentSale} where item_id = ${id}`)
     })
 }
+
 
 

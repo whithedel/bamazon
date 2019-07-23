@@ -1,3 +1,4 @@
+//dependencies
 var inquirer = require(`inquirer`);
 var mysql = require(`mysql`);
 require("dotenv").config();
@@ -5,6 +6,7 @@ var { table } = require("table");
 var chalk = require("chalk");
 var log = console.log;
 
+//setting up my connection.
 var connection = mysql.createConnection({
   host: process.env.DB_HOST,
   user: process.env.DB_USER,
@@ -12,11 +14,14 @@ var connection = mysql.createConnection({
   database: process.env.DB_DATABASE
 });
 
+//fires the connection to the database
 connection.connect(function(error) {
   if (error) throw error;
   setOfMenuOptions();
 });
 
+
+//function to trigger a menu options
 function setOfMenuOptions(message) {
   inquirer
     .prompt([
@@ -52,6 +57,8 @@ function setOfMenuOptions(message) {
   }
 }
 
+
+//function to query the database then display all available products for sale
 function viewProductsForSale() {
   connection.query(`select * from products`, function(error, result) {
     if (error) throw error;
@@ -92,6 +99,8 @@ function viewProductsForSale() {
   });
 }
 
+
+//function to query the database then show all products with less than 5 item left in stock.
 function viewLowInventory() {
   connection.query(`select * from products where stock_quantity < 5`, function(error,result) {
     if (error) throw error;
@@ -132,10 +141,13 @@ function viewLowInventory() {
   });
 }
 
+//function to validate a users choice as a number.
 function validateChoice(choice) {
   var reg = /^\d+$/;
   return reg.test(choice) || chalk.red.bold("A whole number should be inputed!");
 }
+
+//function to validata a currency format.
 function validateCurrency(currency)
         {
             
@@ -151,6 +163,8 @@ function validateCurrency(currency)
       
         }
 
+
+//function that will help a user add more inventory to his stock in the database.
 function addToInventory() {
   inquirer
     .prompt([
@@ -198,6 +212,8 @@ function addToInventory() {
     });
 }
 
+
+//function to confirm a users action 
 function confirmAddNewProduct() {
   inquirer
     .prompt([
@@ -219,6 +235,8 @@ function confirmAddNewProduct() {
     });
 }
 
+
+//function that will let a user add a new product to the database.
 function addNewProduct() {
   inquirer.prompt([
     {
@@ -257,13 +275,11 @@ function addNewProduct() {
       var department = response.department_name;
       var price = response.price;
       var stock = response.stock_quantity;
-      log(response)
       connection.query(
           `insert into products ( product_name, department_name, price, stock_quantity )
            values ('${name}', '${department}', ${price}, ${stock})`,
            function(error, result){
                if (error) throw error;
-            //    log(result);
                log(chalk.black.bgGreen.bold(`You have successfully added the product below.↓↓`))
             let config, productInfo, outputProducts;
 

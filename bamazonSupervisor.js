@@ -1,3 +1,4 @@
+//dependencies
 var inquirer = require(`inquirer`);
 var mysql = require(`mysql`);
 var { table } = require("table");
@@ -5,6 +6,8 @@ var chalk = require("chalk");
 require("dotenv").config();
 var log = console.log;
 
+
+//setting up my connection.
 var connection = mysql.createConnection({
   host: process.env.DB_HOST,
   user: process.env.DB_USER,
@@ -12,11 +15,14 @@ var connection = mysql.createConnection({
   database: process.env.DB_DATABASE
 });
 
+//fires the connection to MySql database 
 connection.connect(function(error) {
   if (error) throw error;
   setOfMenuOptions();
 });
 
+
+//function to trigger a menu options
 function setOfMenuOptions(message) {
   inquirer
     .prompt([
@@ -46,6 +52,8 @@ function setOfMenuOptions(message) {
   }
 }
 
+
+//function to send a query to the database to be able to return a table to view product sales by department.
 function viewProductSalesByDepartment() {
   connection.query(
     `select departments.department_id , 
@@ -102,7 +110,7 @@ function viewProductSalesByDepartment() {
   );
 }
 
-
+//function to validata a currency format.
 function validateCurrency(currency)
         {
             
@@ -118,7 +126,7 @@ function validateCurrency(currency)
       
         }
 
-
+//function to confirm a users action 
 function confirmCreateNewDepartment() {
     inquirer
       .prompt([
@@ -141,6 +149,7 @@ function confirmCreateNewDepartment() {
   }
 
 
+//function that will allow a user to create a new department in the database
 function createNewDepartment(){
     inquirer.prompt([
         {
