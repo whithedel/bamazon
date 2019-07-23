@@ -178,8 +178,8 @@ function leftInStock(id) {
 function updateProductSales(id,currentSale){
     connection.query(`select product_sales from products where item_id = ${id}`, function (error, result){
         if (error) throw error
-        var totalItemProfit = result[0].product_sales;
-        connection.query(`update products set product_sales = ${totalItemProfit+currentSale} where item_id = ${id}`)
+        var totalItemSales = result[0].product_sales;
+        connection.query(`update products set product_sales = ${totalItemSales+currentSale} where item_id = ${id}`)
     })
 }
 
