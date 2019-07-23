@@ -6,15 +6,17 @@ var { table } = require("table");
 var chalk = require("chalk");
 var log = console.log;
 
-
 //setting up my connection.
-var connection = mysql.createConnection({
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  password: process.env.MYSQL_PASSWORD,
-  database: process.env.DB_DATABASE
-});
-
+if (process.env.JAWSDB_URL) {
+  connection = mysql.createConnection(process.env.JAWSDB_URL);
+} else {
+  var connection = mysql.createConnection({
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.MYSQL_PASSWORD,
+    database: process.env.DB_DATABASE
+  });
+}
 
 //function to trigger a menu options
 function options() {
@@ -37,17 +39,15 @@ function options() {
     });
 }
 
-
-//fires the connection to MySql database 
+//fires the connection to MySql database
 connection.connect(function(error) {
-  if (error){
+  if (error) {
     console.error("error connecting: " + err.stack);
     return;
   }
   console.log("connected as id " + connection.threadId);
   options();
 });
-
 
 //function that will open the store to show all available items for purchase
 function openStore(message) {
@@ -159,9 +159,9 @@ function checkStorageForPurchase(id, requestedAmount) {
               )
             );
             var currentSale = requestedAmount * price;
-            updateProductSales(id, currentSale)
+            updateProductSales(id, currentSale);
             leftInStock(id);
-            options()
+            options();
           }
         );
       }
@@ -186,13 +186,16 @@ function leftInStock(id) {
 }
 
 //function that will be use to update the database product_sales column after a purchase has been executed.
-function updateProductSales(id,currentSale){
-    connection.query(`select product_sales from products where item_id = ${id}`, function (error, result){
-        if (error) throw error
-        var totalItemSales = result[0].product_sales;
-        connection.query(`update products set product_sales = ${totalItemSales+currentSale} where item_id = ${id}`)
-    })
+function updateProductSales(id, currentSale) {
+  connection.query(
+    `select product_sales from products where item_id = ${id}`,
+    function(error, result) {
+      if (error) throw error;
+      var totalItemSales = result[0].product_sales;
+      connection.query(
+        `update products set product_sales = ${totalItemSales +
+          currentSale} where item_id = ${id}`
+      );
+    }
+  );
 }
-
-
-
